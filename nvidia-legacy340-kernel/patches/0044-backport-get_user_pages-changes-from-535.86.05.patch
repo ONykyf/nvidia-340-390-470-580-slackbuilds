@@ -1,4 +1,4 @@
-From 2ee73ca5a6fb8167e0fe4eb2698de6eceb45e26a Mon Sep 17 00:00:00 2001
+From 20c392a3fd77e395072a49ca88fa3a291730e9ec Mon Sep 17 00:00:00 2001
 From: Andreas Beckmann <anbe@debian.org>
 Date: Sun, 6 Aug 2023 14:17:05 +0200
 Subject: [PATCH] backport get_user_pages changes from 535.86.05
@@ -9,7 +9,7 @@ Subject: [PATCH] backport get_user_pages changes from 535.86.05
  2 files changed, 130 insertions(+), 43 deletions(-)
 
 diff --git a/nv-linux.h b/nv-linux.h
-index 12002b3..fd17b7b 100644
+index d879954e..ed8f9b5d 100644
 --- a/nv-linux.h
 +++ b/nv-linux.h
 @@ -2126,11 +2126,18 @@ static inline NvU64 nv_node_end_pfn(int nid)
@@ -100,9 +100,9 @@ index 12002b3..fd17b7b 100644
 +    #endif // NV_GET_USER_PAGES_HAS_ARGS_TSK_WRITE_FORCE_VMAS
  #endif // NV_GET_USER_PAGES_REMOTE_PRESENT
  
- #if defined(NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS)
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3, 0, 0)
 diff --git a/conftest.sh b/conftest.sh
-index 401a7a9..4fcc855 100755
+index 401a7a9a..4fcc8555 100755
 --- a/conftest.sh
 +++ b/conftest.sh
 @@ -1879,6 +1879,10 @@ compile_test() {
@@ -388,5 +388,5 @@ index 401a7a9..4fcc855 100755
  
          drm_driver_unload_has_int_return_type)
 -- 
-2.20.1
+2.39.5
 

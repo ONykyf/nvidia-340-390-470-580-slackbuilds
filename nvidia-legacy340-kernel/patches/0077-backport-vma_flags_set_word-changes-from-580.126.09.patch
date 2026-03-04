@@ -1,0 +1,137 @@
+From 8d9e4ae8854fdfbb1f3c26ec5c514780ae79b975 Mon Sep 17 00:00:00 2001
+From: Andreas Beckmann <anbe@debian.org>
+Date: Tue, 27 Jan 2026 19:48:54 +0100
+Subject: [PATCH] backport vma_flags_set_word changes from 580.126.09
+
+---
+ Makefile    |  3 ++-
+ nv-linux.h  | 30 ++++++++++++++++++++++++------
+ conftest.sh | 35 ++++++++++++++++++++++++++---------
+ 3 files changed, 52 insertions(+), 16 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 4500101c..aa25be61 100644
+--- a/Makefile
++++ b/Makefile
+@@ -167,7 +167,8 @@ COMPILE_TESTS = \
+ 	drm_driver_has_gem_prime_callbacks \
+ 	drm_device_has_pdev \
+ 	acpi_bus_get_device \
+-	vm_area_struct_has_const_vm_flags \
++	vma_flags_set_word \
++	vm_flags_set \
+ 	drm_driver_has_date \
+ 
+ #
+diff --git a/nv-linux.h b/nv-linux.h
+index 4063fd8c..0584c541 100644
+--- a/nv-linux.h
++++ b/nv-linux.h
+@@ -2268,7 +2268,27 @@ static inline NvU64 nv_node_end_pfn(int nid)
+  * Commit 45ad9f5290dc updated vma_start_write() to call __vma_start_write().
+  */
+ void nv_vma_start_write(struct vm_area_struct *);
++
++static inline void nv_vma_flags_set_word(struct vm_area_struct *vma, unsigned long flags)
++{
++    nv_vma_start_write(vma);
++#if defined(NV_VMA_FLAGS_SET_WORD_PRESENT)
++    vma_flags_set_word(&vma->flags, flags);
++#else
++    ACCESS_PRIVATE(vma, __vm_flags) |= flags;
+ #endif
++}
++
++static inline void nv_vma_flags_clear_word(struct vm_area_struct *vma, unsigned long flags)
++{
++    nv_vma_start_write(vma);
++#if defined(NV_VMA_FLAGS_SET_WORD_PRESENT)
++    vma_flags_clear_word(&vma->flags, flags);
++#else
++    ACCESS_PRIVATE(vma, __vm_flags) &= ~flags;
++#endif
++}
++#endif // !NV_CAN_CALL_VMA_START_WRITE
+ 
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3, 0, 0)
+ typedef unsigned long vm_flags_t;
+@@ -2277,9 +2297,8 @@ typedef unsigned long vm_flags_t;
+ static inline void nv_vm_flags_set(struct vm_area_struct *vma, vm_flags_t flags)
+ {
+ #if !NV_CAN_CALL_VMA_START_WRITE
+-    nv_vma_start_write(vma);
+-    ACCESS_PRIVATE(vma, __vm_flags) |= flags;
+-#elif defined(NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS)
++    nv_vma_flags_set_word(vma, flags);
++#elif defined(NV_VM_FLAGS_SET_PRESENT)
+     vm_flags_set(vma, flags);
+ #else
+     vma->vm_flags |= flags;
+@@ -2289,9 +2308,8 @@ static inline void nv_vm_flags_set(struct vm_area_struct *vma, vm_flags_t flags)
+ static inline void nv_vm_flags_clear(struct vm_area_struct *vma, vm_flags_t flags)
+ {
+ #if !NV_CAN_CALL_VMA_START_WRITE
+-    nv_vma_start_write(vma);
+-    ACCESS_PRIVATE(vma, __vm_flags) &= ~flags;
+-#elif defined(NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS)
++    nv_vma_flags_clear_word(vma, flags);
++#elif defined(NV_VM_FLAGS_SET_PRESENT)
+     vm_flags_clear(vma, flags);
+ #else
+     vma->vm_flags &= ~flags;
+diff --git a/conftest.sh b/conftest.sh
+index 3e359786..3affa2d5 100755
+--- a/conftest.sh
++++ b/conftest.sh
+@@ -2734,22 +2734,39 @@ compile_test() {
+             compile_check_conftest "$CODE" "NV_ACPI_BUS_GET_DEVICE_PRESENT" "" "functions"
+         ;;
+ 
+-        vm_area_struct_has_const_vm_flags)
++        vm_flags_set)
+             #
+-            # Determine if the 'vm_area_struct' structure has
+-            # const 'vm_flags'.
++            # Determine if the vm_flags_set() function is present. The
++            # presence of this function indicates that the vm_flags_clear()
++            # function is also present.
+             #
+-            # A union of '__vm_flags' and 'const vm_flags' was added by
++            # The functions vm_flags_set()/ vm_flags_clear() were added by
+             # commit bc292ab00f6c ("mm: introduce vma->vm_flags wrapper
+-            # functions") in v6.3.
++            # functions") in v6.3-rc1 (2023-02-09).
+             #
+             CODE="
+-            #include <linux/mm_types.h>
+-            int conftest_vm_area_struct_has_const_vm_flags(void) {
+-                return offsetof(struct vm_area_struct, __vm_flags);
++            #include <linux/mm.h>
++            void conftest_vm_flags_set(void) {
++                vm_flags_set();
++            }"
++
++            compile_check_conftest "$CODE" "NV_VM_FLAGS_SET_PRESENT" "" "functions"
++        ;;
++
++        vma_flags_set_word)
++            #
++            # Determine if the vma_flags_set_word() function is present.
++            #
++            # Added by commit c3f7c506e8f1 ("mm: introduce VMA flags bitmap type")
++            # in v6.19-rc1.
++            #
++            CODE="
++            #include <linux/mm.h>
++            void conftest_vma_flags_set_word(void) {
++                vma_flags_set_word();
+             }"
+ 
+-            compile_check_conftest "$CODE" "NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS" "" "types"
++            compile_check_conftest "$CODE" "NV_VMA_FLAGS_SET_WORD_PRESENT" "" "functions"
+         ;;
+ 
+         drm_driver_has_date)
+-- 
+2.39.5
+

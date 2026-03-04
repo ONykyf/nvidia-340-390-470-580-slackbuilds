@@ -1,0 +1,170 @@
+From 1181b06968ebf48dfd6697df82b09545666dc0ca Mon Sep 17 00:00:00 2001
+From: Andreas Beckmann <anbe@debian.org>
+Date: Thu, 29 Jan 2026 13:30:59 +0100
+Subject: [PATCH] backport conftest.sh comment changes from 545.23.06
+
+---
+ conftest.sh | 59 +++++++++++++++++++++++++++--------------------------
+ 1 file changed, 30 insertions(+), 29 deletions(-)
+
+diff --git a/conftest.sh b/conftest.sh
+index 49951573..5d368fe9 100755
+--- a/conftest.sh
++++ b/conftest.sh
+@@ -547,8 +547,8 @@ compile_test() {
+             #
+             # Added by commit 3c299dc22635 ("PCI: add
+             # pci_get_domain_bus_and_slot function") in 2.6.33 but aarch64
+-            # support was added by commit d1e6dc91b532 
+-            # ("arm64: Add architectural support for PCI") in 3.18-rc1
++            # support was added by commit d1e6dc91b532 ("arm64: Add
++            # architectural support for PCI") in 3.18.
+             #
+             CODE="
+             #include <linux/pci.h>
+@@ -1605,9 +1605,8 @@ compile_test() {
+             #
+             # Determine if the pde_data() function is present.
+             #
+-            # The commit c28198889c15 removed the function
+-            # 'PDE_DATA()', and replaced it with 'pde_data()'
+-            # ("proc: remove PDE_DATA() completely") in v5.17-rc1.
++            # PDE_DATA() was replaced with pde_data() by commit 359745d78351
++            # ("proc: remove PDE_DATA() completely") in v5.17.
+             #
+             CODE="
+             #include <linux/proc_fs.h>
+@@ -1895,9 +1894,9 @@ compile_test() {
+             # commit 768ae309a961 ("mm: replace get_user_pages() write/force
+             # parameters with gup_flags") in v4.9 (2016-10-13)
+             #
+-            # Removed vmas parameter from get_user_pages() by commit 7bbf9c8c99
++            # Removed vmas parameter from get_user_pages() by commit 54d020692b34
+             # ("mm/gup: remove unused vmas parameter from get_user_pages()")
+-            # in linux-next, expected in v6.5-rc1
++            # in v6.5.
+             #
+             # linux-4.4.168 cherry-picked commit 768ae309a961 without
+             # c12d2da56d0e which is covered in Conftest #3.
+@@ -2065,11 +2064,11 @@ compile_test() {
+             #
+             # get_user_pages_remote() removed 'tsk' parameter by
+             # commit 64019a2e467a ("mm/gup: remove task_struct pointer for
+-            # all gup code") in v5.9-rc1 (2020-08-11).
++            # all gup code") in v5.9.
+             #
+             # Removed vmas parameter from get_user_pages_remote() by commit
+-            # a4bde14d549 ("mm/gup: remove vmas parameter from get_user_pages_remote()")
+-            # in linux-next, expected in v6.5-rc1
++            # ca5e863233e8 ("mm/gup: remove vmas parameter from
++            # get_user_pages_remote()") in v6.5.
+             #
+ 
+             #
+@@ -2430,8 +2429,8 @@ compile_test() {
+             #
+             # The DRIVER_PRIME flag was added by commit 3248877ea179 (drm:
+             # base prime/dma-buf support (v5)) in v3.4 (2011-11-25) and is
+-            # removed by commit 0424fdaf883a (drm/prime: Actually remove
+-            # DRIVER_PRIME everywhere) on 2019-06-17.
++            # removed by commit 0424fdaf883a ("drm/prime: Actually remove
++            # DRIVER_PRIME everywhere") in v5.4.
+             #
+             # DRIVER_PRIME definition moved from drmP.h to drm_drv.h by
+             # commit 85e634bce01a (drm: Extract drm_drv.h) in v4.10
+@@ -2508,8 +2507,8 @@ compile_test() {
+             #
+             # Determine if the 'struct proc_ops' type is present.
+             #
+-            # Added by commit d56c0d45f0e2 ("proc: decouple proc from VFS with
+-            # "struct proc_ops"") in 5.6-rc1
++            # Added by commit d56c0d45f0e2 ("proc: decouple proc from VFS
++            # with "struct proc_ops"") in v5.6.
+             #
+             CODE="
+             #include <linux/proc_fs.h>
+@@ -2581,7 +2580,7 @@ compile_test() {
+             # function pointer.
+             #
+             # drm_driver::gem_free_object is removed by commit 1a9458aeb8eb
+-            # ("drm: remove drm_driver::gem_free_object") in v5.9-rc1.
++            # ("drm: remove drm_driver::gem_free_object") in v5.9.
+             #
+             CODE="
+             #if defined(NV_DRM_DRMP_H_PRESENT)
+@@ -2604,7 +2603,7 @@ compile_test() {
+             # Determine if vga_tryget() is present
+             #
+             # vga_tryget() was removed by commit f369bc3f9096 ("vgaarb: mark
+-            # vga_tryget static") in v5.9-rc1 (2020-08-01).
++            # vga_tryget static") in v5.9.
+             #
+             CODE="
+             #include <linux/vgaarb.h>
+@@ -2619,8 +2618,9 @@ compile_test() {
+             #
+             # Determine if drm_prime_pages_to_sg() has 'dev' argument.
+             #
+-            # drm_prime_pages_to_sg() is updated to take 'dev' argument by commit
+-            # 707d561f77b5 ("drm: allow limiting the scatter list size.").
++            # drm_prime_pages_to_sg() is updated to take 'dev' argument by
++            # commit 707d561f77b5 ("drm: allow limiting the scatter list
++            # size.") in v5.10.
+             #
+             CODE="
+             #if defined(NV_DRM_DRMP_H_PRESENT)
+@@ -2644,9 +2644,9 @@ compile_test() {
+             # Determine if drm_driver structure has the GEM and PRIME callback
+             # function pointers.
+             #
+-            # The GEM and PRIME callback are removed from drm_driver
+-            # structure, by commit d693def4fd1c ("drm: Remove obsolete GEM and
+-            # PRIME callbacks from struct drm_driver").
++            # The GEM and PRIME callbacks are removed from drm_driver
++            # structure by commit d693def4fd1c ("drm: Remove obsolete GEM and
++            # PRIME callbacks from struct drm_driver") in v5.11.
+             #
+             CODE="
+             #if defined(NV_DRM_DRMP_H_PRESENT)
+@@ -2675,7 +2675,7 @@ compile_test() {
+             # Determine if the 'drm_device' structure has a 'pdev' field.
+             #
+             # Removed by commit b347e04452ff ("drm: Remove pdev field from
+-            # struct drm_device") in v5.14-rc1.
++            # struct drm_device") in v5.14.
+             #
+             CODE="
+             #if defined(NV_DRM_DRMP_H_PRESENT)
+@@ -2738,10 +2738,9 @@ compile_test() {
+             # Determine if the 'vm_area_struct' structure has
+             # const 'vm_flags'.
+             #
+-            # A union of '__vm_flags' and 'const vm_flags' was added 
+-            # by commit bc292ab00f6c ("mm: introduce vma->vm_flags
+-            # wrapper functions") in mm-stable branch (2023-02-09)
+-            # of the akpm/mm maintainer tree.
++            # A union of '__vm_flags' and 'const vm_flags' was added by
++            # commit bc292ab00f6c ("mm: introduce vma->vm_flags wrapper
++            # functions") in v6.3.
+             #
+             CODE="
+             #include <linux/mm_types.h>
+@@ -2753,10 +2752,12 @@ compile_test() {
+         ;;
+ 
+         # When adding a new conftest entry, please use the correct format for
+-        # specifying the relevant upstream Linux kernel commit.
++        # specifying the relevant upstream Linux kernel commit.  Please
++        # avoid specifying -rc kernels, and only use SHAs that actually exist
++        # in the upstream Linux kernel git repository.
+         #
+-        # <function> was added|removed|etc by commit <sha> ("<commit message")
+-        # in <kernel-version> (<commit date>).
++        # Added|Removed|etc by commit <short-sha> ("<commit message") in
++        # <kernel-version>.
+ 
+         *)
+             # Unknown test name given
+-- 
+2.39.5
+

@@ -1,0 +1,28 @@
+From 30d410424d74a36e50ef7e254e17cec06e6aeee9 Mon Sep 17 00:00:00 2001
+From: Andreas Beckmann <anbe@debian.org>
+Date: Thu, 29 Jan 2026 14:49:48 +0100
+Subject: [PATCH] backport conftest.sh comment changes from 525.53
+
+---
+ conftest.sh | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/conftest.sh b/conftest.sh
+index 7289531d..49951573 100755
+--- a/conftest.sh
++++ b/conftest.sh
+@@ -545,6 +545,11 @@ compile_test() {
+             # Determine if the pci_get_domain_bus_and_slot() function
+             # is present.
+             #
++            # Added by commit 3c299dc22635 ("PCI: add
++            # pci_get_domain_bus_and_slot function") in 2.6.33 but aarch64
++            # support was added by commit d1e6dc91b532 
++            # ("arm64: Add architectural support for PCI") in 3.18-rc1
++            #
+             CODE="
+             #include <linux/pci.h>
+             void conftest_pci_get_domain_bus_and_slot(void) {
+-- 
+2.39.5
+

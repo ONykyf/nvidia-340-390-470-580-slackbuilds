@@ -111,6 +111,7 @@ while read LINE ; do
   if echo $LINE | egrep '^# ' >/dev/null ; then
     continue
   fi
+  echo Applying patch $LINE
   patch -p1 < $CWD/patches/$LINE
 done
 
@@ -134,6 +135,7 @@ mv Makefile.new Makefile
 mv uvm/Makefile.new uvm/Makefile
 
 patch -p2 < $CWD/nv-drm-fop-flags.patch
+patch -p2 < $CWD/nv-no-per-vma-lock-on-x86.patch
 
 touch .nv-kernel.o.cmd
 )

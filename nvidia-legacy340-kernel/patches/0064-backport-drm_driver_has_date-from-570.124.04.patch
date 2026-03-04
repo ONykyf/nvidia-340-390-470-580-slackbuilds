@@ -1,4 +1,4 @@
-From 0377efc56761f711740bc48e0744aa6facaad474 Mon Sep 17 00:00:00 2001
+From 1573070a98c18c992c1564fd4f76139783c85a31 Mon Sep 17 00:00:00 2001
 From: Andreas Beckmann <anbe@debian.org>
 Date: Thu, 27 Mar 2025 19:11:23 +0100
 Subject: [PATCH] backport drm_driver_has_date from 570.124.04
@@ -22,10 +22,10 @@ index a17d6096..9b2bf007 100644
  #
  # CFLAGS dependent on the type of builds (e.g. single/muliple module, debug)
 diff --git a/conftest.sh b/conftest.sh
-index eec7de50..bf43a538 100755
+index 5d368fe9..6154c24c 100755
 --- a/conftest.sh
 +++ b/conftest.sh
-@@ -2747,6 +2747,30 @@ compile_test() {
+@@ -2751,6 +2751,30 @@ compile_test() {
              compile_check_conftest "$CODE" "NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS" "" "types"
          ;;
  
@@ -54,8 +54,8 @@ index eec7de50..bf43a538 100755
 +        ;;
 +
          # When adding a new conftest entry, please use the correct format for
-         # specifying the relevant upstream Linux kernel commit.
-         #
+         # specifying the relevant upstream Linux kernel commit.  Please
+         # avoid specifying -rc kernels, and only use SHAs that actually exist
 diff --git a/nv-drm.c b/nv-drm.c
 index e676287c..f6fb4583 100644
 --- a/nv-drm.c

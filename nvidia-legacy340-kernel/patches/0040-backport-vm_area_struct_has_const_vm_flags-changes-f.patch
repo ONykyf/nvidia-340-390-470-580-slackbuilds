@@ -1,8 +1,8 @@
-From 46316abb767bd38c8b633a0bdd4f0cb581dd2ea9 Mon Sep 17 00:00:00 2001
+From f14b3c7367182d8675377b8c0628517fb6b022b3 Mon Sep 17 00:00:00 2001
 From: Andreas Beckmann <anbe@debian.org>
-Date: Tue, 27 Jun 2023 22:26:21 +0200
+Date: Thu, 29 Jan 2026 15:32:27 +0100
 Subject: [PATCH] backport vm_area_struct_has_const_vm_flags changes from
- 470.199.02
+ 525.105.17
 
 ---
  Makefile               |  1 +
@@ -15,7 +15,7 @@ Subject: [PATCH] backport vm_area_struct_has_const_vm_flags changes from
  7 files changed, 78 insertions(+), 13 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 7ce41f8..a17d609 100644
+index 7ce41f89..a17d6096 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -167,6 +167,7 @@ COMPILE_TESTS = \
@@ -26,8 +26,39 @@ index 7ce41f8..a17d609 100644
  
  #
  # CFLAGS dependent on the type of builds (e.g. single/muliple module, debug)
+diff --git a/nv-linux.h b/nv-linux.h
+index 49c79733..2520d2d6 100644
+--- a/nv-linux.h
++++ b/nv-linux.h
+@@ -2276,4 +2276,26 @@ static inline NvU64 nv_node_end_pfn(int nid)
+     #endif
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 0, 0)
++typedef unsigned long vm_flags_t;
++#endif
++
++static inline void nv_vm_flags_set(struct vm_area_struct *vma, vm_flags_t flags)
++{
++#if defined(NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS)
++    vm_flags_set(vma, flags);
++#else
++    vma->vm_flags |= flags;
++#endif
++}
++
++static inline void nv_vm_flags_clear(struct vm_area_struct *vma, vm_flags_t flags)
++{
++#if defined(NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS)
++    vm_flags_clear(vma, flags);
++#else
++    vma->vm_flags &= ~flags;
++#endif
++}
++
+ #endif  /* _NV_LINUX_H_ */
 diff --git a/conftest.sh b/conftest.sh
-index b54d17e..b1b83d0 100755
+index b54d17ec..b1b83d06 100755
 --- a/conftest.sh
 +++ b/conftest.sh
 @@ -2562,6 +2562,25 @@ compile_test() {
@@ -56,39 +87,8 @@ index b54d17e..b1b83d0 100755
          # When adding a new conftest entry, please use the correct format for
          # specifying the relevant upstream Linux kernel commit.
          #
-diff --git a/nv-linux.h b/nv-linux.h
-index 49c7973..1c95b1e 100644
---- a/nv-linux.h
-+++ b/nv-linux.h
-@@ -2276,4 +2276,26 @@ static inline NvU64 nv_node_end_pfn(int nid)
-     #endif
- #endif
- 
-+#if defined(NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS)
-+static inline void nv_vm_flags_set(struct vm_area_struct *vma, vm_flags_t flags)
-+{
-+    vm_flags_set(vma, flags);
-+}
-+
-+static inline void nv_vm_flags_clear(struct vm_area_struct *vma, vm_flags_t flags)
-+{
-+    vm_flags_clear(vma, flags);
-+}
-+#else
-+static inline void nv_vm_flags_set(struct vm_area_struct *vma, unsigned long flags)
-+{
-+    vma->vm_flags |= flags;
-+}
-+
-+static inline void nv_vm_flags_clear(struct vm_area_struct *vma, unsigned long flags)
-+{
-+    vma->vm_flags &= ~flags;
-+}
-+#endif
-+
- #endif  /* _NV_LINUX_H_ */
 diff --git a/nv-mmap.c b/nv-mmap.c
-index fb27c79..473d5fa 100644
+index fb27c798..473d5fad 100644
 --- a/nv-mmap.c
 +++ b/nv-mmap.c
 @@ -312,7 +312,7 @@ int nvidia_mmap(
@@ -123,7 +123,7 @@ index fb27c79..473d5fa 100644
  
          vma->vm_ops = &nv_vm_ops;
 diff --git a/uvm/Makefile b/uvm/Makefile
-index 14cd218..b86e215 100644
+index 14cd2187..b86e2158 100644
 --- a/uvm/Makefile
 +++ b/uvm/Makefile
 @@ -175,6 +175,7 @@ COMPILE_TESTS = \
@@ -135,7 +135,7 @@ index 14cd218..b86e215 100644
  MODULE_NAME:= nvidia-uvm
  
 diff --git a/uvm/nvidia_uvm_linux.h b/uvm/nvidia_uvm_linux.h
-index 9c1c3a8..7dc8847 100644
+index 9c1c3a83..7dc8847e 100644
 --- a/uvm/nvidia_uvm_linux.h
 +++ b/uvm/nvidia_uvm_linux.h
 @@ -445,5 +445,27 @@ static inline const char *kbasename(const char *str)
@@ -167,7 +167,7 @@ index 9c1c3a8..7dc8847 100644
  #endif // _NVIDIA_UVM_LINUX_H
  
 diff --git a/uvm/nvidia_uvm_lite.c b/uvm/nvidia_uvm_lite.c
-index c2abbc3..61a2bd9 100644
+index c2abbc35..61a2bd98 100644
 --- a/uvm/nvidia_uvm_lite.c
 +++ b/uvm/nvidia_uvm_lite.c
 @@ -1537,9 +1537,9 @@ static int uvmlite_mmap(struct file * filp, struct vm_area_struct * vma)
@@ -217,5 +217,5 @@ index c2abbc3..61a2bd9 100644
  
  //
 -- 
-2.20.1
+2.39.5
 

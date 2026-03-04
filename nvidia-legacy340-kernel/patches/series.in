@@ -54,11 +54,18 @@ buildfix_kernel_5.2.patch
 0053-fix-more-warnings.patch
 #HAS_UVM#0054-fix-more-uvm-warnings.patch
 0060-backport-build_cflags-changes-from-525.85.05.patch
+0063-backport-conftest.sh-comment-changes-from-515.48.07.patch
+0063-backport-conftest.sh-comment-changes-from-525.53.patch
+0063-backport-conftest.sh-comment-changes-from-545.23.06.patch
 0064-backport-drm_driver_has_date-from-570.124.04.patch
 0065-backport-ccflags-y-changes-from-570.153.02.patch
 0066-backport-nv_timer_delete_sync-changes-from-570.153.0.patch
 0071-backport-nv_vma_start_write-changes-from-570.169.patch
 0072-disable-objtool-usage.patch
+0075-backport-drm_print.h-changes-from-570.211.01.patch
+0076-backport-nv_in_hardirq-changes-from-580.119.02.patch
+0077-backport-vma_flags_set_word-changes-from-580.126.09.patch
+#HAS_UVM#0078-backport-vma_flags_set_word-changes-from-580.126.09-.patch
 
 # build system updates
 separate-makefile-kbuild.patch

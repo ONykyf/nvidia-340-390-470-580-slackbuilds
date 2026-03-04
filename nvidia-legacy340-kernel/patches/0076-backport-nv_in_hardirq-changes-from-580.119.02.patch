@@ -1,0 +1,68 @@
+From d235e59d42f96c54c263494ba4a0fa1f74560a28 Mon Sep 17 00:00:00 2001
+From: Andreas Beckmann <anbe@debian.org>
+Date: Tue, 27 Jan 2026 18:09:15 +0100
+Subject: [PATCH] backport nv_in_hardirq changes from 580.119.02
+
+---
+ nv-time.h      | 13 +++++++++++++
+ os-interface.c |  6 +++---
+ 2 files changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/nv-time.h b/nv-time.h
+index d283dee0..f150c8eb 100644
+--- a/nv-time.h
++++ b/nv-time.h
+@@ -40,6 +40,19 @@ typedef struct timeval nv_timeval;
+ typedef struct __kernel_old_timeval nv_timeval;
+ #endif
+ 
++/*
++ * in_hardirq() was added in v5.11-rc1 (2020-12-15) to replace in_irq().
++ * Fall back to in_irq() for older kernels that don't have in_hardirq().
++ */
++static inline NvBool nv_in_hardirq(void)
++{
++#if defined(in_hardirq)
++    return in_hardirq();
++#else
++    return in_irq();
++#endif
++}
++
+ static inline void nv_gettimeofday(nv_timeval *tv)
+ {
+ #ifdef NV_DO_GETTIMEOFDAY_PRESENT
+diff --git a/os-interface.c b/os-interface.c
+index 640e89fb..445aa033 100644
+--- a/os-interface.c
++++ b/os-interface.c
+@@ -219,7 +219,7 @@ BOOL NV_API_CALL os_semaphore_may_sleep(void)
+ 
+ BOOL NV_API_CALL os_is_isr(void)
+ {
+-    return (in_irq());
++    return (nv_in_hardirq());
+ }
+ 
+ // return TRUE if the caller is the super-user
+@@ -479,7 +479,7 @@ RM_STATUS NV_API_CALL os_delay_us(NvU32 MicroSeconds)
+     nv_gettimeofday(&tm1);
+ #endif
+ 
+-    if (in_irq() && (MicroSeconds > NV_MAX_ISR_DELAY_US))
++    if (nv_in_hardirq() && (MicroSeconds > NV_MAX_ISR_DELAY_US))
+         return RM_ERROR;
+     
+     mdelay_safe_msec = MicroSeconds / 1000;
+@@ -524,7 +524,7 @@ RM_STATUS NV_API_CALL os_delay(NvU32 MilliSeconds)
+     tm_start = tm_aux;
+ #endif
+ 
+-    if (in_irq() && (MilliSeconds > NV_MAX_ISR_DELAY_MS))
++    if (nv_in_hardirq() && (MilliSeconds > NV_MAX_ISR_DELAY_MS))
+         return RM_ERROR;
+ 
+     if (!NV_MAY_SLEEP()) 
+-- 
+2.39.5
+

@@ -1,4 +1,4 @@
-From f8446e5dbd1b6e526b780f7e36075006ed0730ad Mon Sep 17 00:00:00 2001
+From 40052e2c5cf4dcad6160c8dc503fb859b94c0c12 Mon Sep 17 00:00:00 2001
 From: Andreas Beckmann <anbe@debian.org>
 Date: Sun, 6 Aug 2023 17:18:58 +0200
 Subject: [PATCH] backport get_user_pages changes from 525.53
@@ -9,7 +9,7 @@ Subject: [PATCH] backport get_user_pages changes from 525.53
  2 files changed, 50 insertions(+), 67 deletions(-)
 
 diff --git a/nv-linux.h b/nv-linux.h
-index 949aa27..12002b3 100644
+index 63b74b20..d879954e 100644
 --- a/nv-linux.h
 +++ b/nv-linux.h
 @@ -2108,6 +2108,8 @@ static inline NvU64 nv_node_end_pfn(int nid)
@@ -171,10 +171,10 @@ index 949aa27..12002b3 100644
 +    #endif // NV_GET_USER_PAGES_HAS_ARGS_TSK_WRITE_FORCE
 +#endif // NV_GET_USER_PAGES_REMOTE_PRESENT
  
- #if defined(NV_VM_AREA_STRUCT_HAS_CONST_VM_FLAGS)
- static inline void nv_vm_flags_set(struct vm_area_struct *vma, vm_flags_t flags)
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3, 0, 0)
+ typedef unsigned long vm_flags_t;
 diff --git a/os-mlock.c b/os-mlock.c
-index 8a1fa2f..5406645 100644
+index 8a1fa2f1..54066451 100644
 --- a/os-mlock.c
 +++ b/os-mlock.c
 @@ -25,7 +25,6 @@ RM_STATUS NV_API_CALL os_lock_user_pages(
@@ -195,5 +195,5 @@ index 8a1fa2f..5406645 100644
      pinned = ret;
  
 -- 
-2.20.1
+2.39.5
 
