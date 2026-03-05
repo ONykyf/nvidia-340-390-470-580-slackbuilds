@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Slackware build script for nvidia-legacy390-kernel
+# Slackware build script for nvidia-kernel
 
 # Copyright 2007-2011 Heinz Wiesinger, Amsterdam, The Netherlands
-# Copyright 2012-2019 Edward W. Koenig, Vancouver, WA, USA
+# Copyright 2011-2017 Edward W. Koenig, Vancouver, WA, USA
 # Copyright 2025 Oleh Nykyforchyn, Ivano-Frankivsk, Ukraine
 # All rights reserved.
 #
@@ -26,6 +26,8 @@
 
 # Thanks to Robby Workman for suggestions to improve this script.
 
+# See changelog.txt
+
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=nvidia-legacy390-kernel
@@ -34,12 +36,12 @@ BUILD=${BUILD:-1}
 TAG=${TAG:-_Nyk}
 PKGTYPE=${PKGTYPE:-tgz}
 
+EXTRA_CHECK=${EXTRA_CHECK:-no}
+
 NODRM=${NODRM:-no}
 
 KERNEL=${KERNEL:-$(uname -r)}
 KERNELPATH=${KERNELPATH:-/lib/modules/${KERNEL}/build}
-
-set -e
 
 PKGVER=${VERSION}_$(echo $KERNEL | tr - _)
 
@@ -53,8 +55,10 @@ fi
 
 if [ "$ARCH" = "i586" ]; then
   TARGET="x86"
+  SRCSUFFIX=""
 elif [ "$ARCH" = "i686" ]; then
   TARGET="x86"
+  SRCSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
   TARGET="x86_64"
 fi
@@ -73,13 +77,14 @@ TMP=${TMP:-/tmp/Nyk}
 PKG=$TMP/package-$PRGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
+set -e
+
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP || exit 1
 rm -rf $SRCNAM
 
 (
-
 sh $CWD/../$SRCNAM.run --extract-only || exit 1
 cd $SRCNAM || exit 1
 chown -R root:root .
@@ -90,11 +95,6 @@ find -L . \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
 (
-    unset ARCH
-
-    tar -xvf nvidia-persistenced-init.tar.bz2
-    sed -i 's/__NV_VK_ICD__/libGLX_nvidia.so.0/' nvidia_icd.json.template
-
     # Restore phys_to_dma support (still needed for 390.138)
     # From loqs via https://bugs.archlinux.org/task/58074
     patch -Np1 -i $CWD/patches/kernel-4.16+-memory-encryption.patch
@@ -103,7 +103,11 @@ find -L . \
     patch -Np1 -i $CWD/patches/kernel-6.2.patch
 
     # From Ike Devolder
-    patch -Np1 -i $CWD/patches/kernel-6.3.patch
+    if [ "$TARGET" = "x86_64" ]; then
+        patch -Np1 -i $CWD/patches/kernel-6.3.patch
+    else
+        patch -Np1 -i $CWD/patches/kernel-6.3-32.patch
+    fi
 
     # From Joan Bruguera via duht
     patch -Np1 -i $CWD/patches/kernel-6.4.patch
@@ -136,10 +140,14 @@ find -L . \
     patch -Np1 -i $CWD/patches/gcc-15.patch
 
     # From Joan Bruguera (https://gist.github.com/joanbm/def2bf57ed7a799c1d84a67606459314), edited by drankinatty
-    patch -Np1 -i $CWD/patches/kernel-6.15.patch
+    if [ "$TARGET" = "x86_64" ]; then
+        patch -Np1 -i $CWD/patches/kernel-6.15.patch
+    else
+        patch -Np1 -i $CWD/patches/kernel-6.15-32.patch
+    fi
 
-    # From Oleh Nykyforchyn
-    patch -Np1 -i $CWD/patches/NVIDIA-Linux-x86_64-390.157-fix-memdbg.patch
+    # From Oleh Nykyforchyn - overridden by kernel-6.19.patch
+    # patch -Np1 -i $CWD/patches/NVIDIA-Linux-x86_64-390.157-fix-memdbg.patch
 
     # From Oleh Nykyforchyn
     patch -Np1 -i $CWD/patches/NVIDIA-Linux-x86_64-390.157-retpoline.patch
@@ -147,7 +155,23 @@ find -L . \
     # From Joan Bruguera (https://github.com/joanbm/nvidia-470xx-linux-mainline/blob/master/patches/nvidia-470xx-fix-linux-6.17.patch)
     patch -Np1 -i $CWD/patches/kernel-6.17.patch
 
+    # From Joan Bruguera
+    patch -Np1 -i $CWD/patches/kernel-6.19.patch
+
+    # From Oleh Nykyforchyn
+    patch -Np1 -i $CWD/patches/NVIDIA-Linux-x86-390.157-hardirq.patch
+)
+
+(
+    unset ARCH
+
+    tar -xvf nvidia-persistenced-init.tar.bz2
+    sed -i 's/__NV_VK_ICD__/libGLX_nvidia.so.0/' nvidia_icd.json.template
+
     cd kernel || exit 1
+
+    echo "\$(obj)/nvidia.o: private objtool := true" >> nvidia/nvidia.Kbuild
+    echo "\$(obj)/nvidia-modeset.o: private objtool := true" >> nvidia-modeset/nvidia-modeset.Kbuild
 
     if [ "$NODRM" = "yes" ]; then
         CC=${CC:-gcc} NV_EXCLUDE_KERNEL_MODULES=nvidia-drm make SYSSRC=$KERNELPATH module || exit 1
@@ -182,3 +206,4 @@ cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$PKGVER-$ARCH-$BUILD$TAG.$PKGTYPE
 mv $OUTPUT/$PRGNAM-$PKGVER-$ARCH-$BUILD$TAG.$PKGTYPE $CWD/
 ) 2>&1 | tee $CWD/$PRGNAM-$PKGVER-$ARCH-$BUILD$TAG.log
+
