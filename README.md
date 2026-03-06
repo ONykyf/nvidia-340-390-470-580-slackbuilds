@@ -1,10 +1,10 @@
 # nvidia-340-390-470-slackbuilds
 
-SlackBuilds with the necessary sources to build legacy NVidia drivers (kernel modules, X drivers, and nvidia utilities) versions 340 (for Tesla cards), 390 (for Fermi cards), and 470 (for Kepler cards) for use with XLibre xserver in Slackware.
+SlackBuilds with the necessary sources to build legacy NVidia drivers (kernel modules, X drivers, and nvidia utilities) versions 340 (for Tesla cards, 32 bit and 64 bit), 390 (for Fermi cards, 32 bit and 64 bit), and 470 (for Kepler cards, 64 bit, drivers for 32 bit has not been released) for use with XLibre xserver in Slackware.
 
 ## Objectives
 
-- To allow a user to install NVidia drivers on systems with recent Linux kernels (tested up to 6.17.6) so that they "just work", with little to no manual intervention;
+- To allow a user to install NVidia drivers on systems with recent Linux kernels (tested up to 6.19.5) so that they "just work", with little to no manual intervention;
 
 - To make NVidia packages safe in the sense that if NVidia card is absent or disabled, then the legacy drivers' presence does not affect the system;
 
