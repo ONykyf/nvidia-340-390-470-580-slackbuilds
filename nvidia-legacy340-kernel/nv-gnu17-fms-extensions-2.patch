@@ -1,0 +1,21 @@
+--- NVIDIA-Linux-x86_64-340.108/kernel/uvm/Makefile.orig	2026-03-08 14:47:25.256805181 +0200
++++ NVIDIA-Linux-x86_64-340.108/kernel/uvm/Makefile	2026-03-08 14:52:59.457219217 +0200
+@@ -58,6 +58,8 @@
+     endif
+ endif
+ 
++EXTRA_CFLAGS += -std=gnu17 -fms-extensions
++
+ NV_HOST_OS := $(shell uname)
+ NV_HOST_ARCH := $(shell uname -m)
+ 
+--- NVIDIA-Linux-x86_64-340.108/kernel/Makefile.orig	2026-03-08 14:47:25.245056950 +0200
++++ NVIDIA-Linux-x86_64-340.108/kernel/Makefile	2026-03-08 14:53:58.975993793 +0200
+@@ -169,6 +169,7 @@
+ endif
+ 
+ ccflags-y += -UDEBUG -U_DEBUG -DNDEBUG
++ccflags-y += -std=gnu17 -fms-extensions
+ 
+ #
+ # Include common definitions; we rely on the definition of the source path to

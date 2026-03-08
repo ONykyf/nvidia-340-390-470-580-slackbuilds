@@ -95,6 +95,8 @@ cat $CWD/patches/series.in | sed 's/#HAS_UVM#//g' | \
 (
 cd kernel
 
+patch -p2 < $CWD/nv-gnu17-fms-extensions-1.patch
+
 $CWD/tools/get_configured340.sh
 mv got_configured340.txt got_configured340.orig
 $CWD/tools/get_defined340.sh
@@ -136,6 +138,8 @@ mv uvm/Makefile.new uvm/Makefile
 
 patch -p2 < $CWD/nv-drm-fop-flags.patch
 patch -p2 < $CWD/nv-no-per-vma-lock-on-x86.patch
+patch -p2 < $CWD/nv-gnu17-fms-extensions-2.patch
+
 
 touch .nv-kernel.o.cmd
 )

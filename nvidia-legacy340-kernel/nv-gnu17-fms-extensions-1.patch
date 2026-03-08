@@ -1,0 +1,17 @@
+--- NVIDIA-Linux-x86_64-340.108/kernel/conftest.sh.orig	2026-03-08 14:38:20.513009390 +0200
++++ NVIDIA-Linux-x86_64-340.108/kernel/conftest.sh	2026-03-08 14:42:03.486378367 +0200
+@@ -287,6 +287,14 @@
+         if [ `/bin/sh "$GCC_GOTO_SH" "$CC"` = "y" ]; then
+             CFLAGS="$CFLAGS -DCC_HAVE_ASM_GOTO"
+         fi
++
++    # Specify the C standard, instead of defaulting to the compiler's
++    CFLAGS="$CFLAGS -std=gnu17"
++
++    # Rel. commit "Kbuild: enable -fms-extensions" (Rasmus Villemoes, 20 Oct 2025)
++    # Enable the flags since the Linux headers use those extensions in some structs
++    # See https://www.phoronix.com/news/Linux-6.19-Patch-Would-MS-Ext
++    CFLAGS="$CFLAGS -fms-extensions"
+     fi
+ }
+ 
