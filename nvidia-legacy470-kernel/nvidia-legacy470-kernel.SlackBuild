@@ -94,6 +94,9 @@ find -L . \
 
   unset ARCH
 
+  echo "\$(obj)/nvidia.o: private objtool := true" >> nvidia/nvidia.Kbuild
+  echo "\$(obj)/nvidia-modeset.o: private objtool := true" >> nvidia-modeset/nvidia-modeset.Kbuild
+
 # Patches for -current:
 if [ "$KERNELMAJOR" == "6" ]; then
   patch -p1 < $CWD/patches/nvidia-legacy470-gcc14.patch
@@ -105,6 +108,8 @@ if [ "$KERNELMAJOR" == "6" ]; then
   patch -p1 < $CWD/patches/kernel-6.14.patch
   patch -p1 < $CWD/patches/nvidia-470xx-fix-linux-6.15.patch
   patch -p1 < $CWD/patches/kernel-6.17.patch
+  patch -p1 < $CWD/patches/nvidia-470xx-fix-linux-6.19-part1.patch
+  patch -p1 < $CWD/patches/nvidia-470xx-fix-linux-6.19-part2.patch
 fi
 # CC=${CC:-gcc} suppresses an otherwise harmless "compiler mismatch"
 # message.  If you custom-build your kernel with clang,

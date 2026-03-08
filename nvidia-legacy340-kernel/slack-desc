@@ -6,7 +6,7 @@
 # customary to leave one space after the ':' except on otherwise blank lines.
 
                        |-----handy-ruler------------------------------------------------------|
-nvidia-legacy340-kernel: nvidia-legacy340-kernel (Kernel Interface for the nvidia driver)
+nvidia-legacy340-kernel: nvidia-legacy340-kernel (Kernel interface for the Nvidia 340 driver)
 nvidia-legacy340-kernel:
 nvidia-legacy340-kernel: This is the kernel module needed by the binary nvidia-driver.
 nvidia-legacy340-kernel:

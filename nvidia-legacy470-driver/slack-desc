@@ -6,7 +6,7 @@
 # customary to leave one space after the ':' except on otherwise blank lines.
 
                        |-----handy-ruler------------------------------------------------------|
-nvidia-legacy470-driver: nvidia-legacy470-driver (Proprietary Binary Nvidia Video Driver)
+nvidia-legacy470-driver: nvidia-legacy470-driver (Proprietary binary Nvidia 470 video driver)
 nvidia-legacy470-driver:
 nvidia-legacy470-driver: This is the proprietary binary video driver from nvidia for
 nvidia-legacy470-driver: the x.org X server. This package does not include the kernel
