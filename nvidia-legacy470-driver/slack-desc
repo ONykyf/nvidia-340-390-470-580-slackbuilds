@@ -10,10 +10,10 @@ nvidia-legacy470-driver: nvidia-legacy470-driver (Proprietary binary Nvidia 470 
 nvidia-legacy470-driver:
 nvidia-legacy470-driver: This is the proprietary binary video driver from nvidia for
 nvidia-legacy470-driver: the x.org X server. This package does not include the kernel
-nvidia-legacy470-driver: module - it is included in the nvidia-kernel package.
+nvidia-legacy470-driver: module - it is included in the nvidia-legacy470-kernel package.
 nvidia-legacy470-driver:
 nvidia-legacy470-driver: See /usr/doc/nvidia-legacy470-driver-PKGVERSION/README.Slackware
 nvidia-legacy470-driver: for more information.
 nvidia-legacy470-driver:
-nvidia-legacy470-driver: https://www.nvidia.com
+nvidia-legacy470-driver:
 nvidia-legacy470-driver:
