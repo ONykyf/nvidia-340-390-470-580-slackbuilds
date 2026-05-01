@@ -34,8 +34,8 @@ The packages for nvidia340 at slackbuilds.org are [abandoned now](https://slackb
 ## Prerequisites
 
 It is assumed that you use the XLibre version for Slackware provided at [https://github.com/ONykyf/X11Libre-SlackBuild](https://github.com/ONykyf/X11Libre-SlackBuild), which contains PRs not yet merged into XLibre master.
-They allow to set `IgnoreABI` and `ModulePath`s for specific `Driver`s and `Module`s, and to enable them only if a DRM device driven by `nvidia-drm` is detected.
-Then a specially crafted `OutputClass` in `/usr/share/X11/xorg.conf.d/10-nvidia.conf` (which is an enhanced version of a similar file used in XOrg) does the trick.
+They allow to set not only `ModulePath`s (which is merged into stable and master already), but also `IgnoreABI` for specific `Driver`s and `Module`s, and to enable them only if a DRM device driven by `nvidia-drm` is detected.
+Then specially crafted `OutputClass`es in `/usr/share/X11/xorg.conf.d/10-nvidia.conf` (which is an enhanced version of a similar file used in XOrg) and its supplement  `/usr/share/X11/xorg.conf.d/10-nvidia-modules.conf` do the trick.
 
 ## How to download
 
