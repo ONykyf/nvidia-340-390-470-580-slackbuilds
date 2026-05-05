@@ -6,7 +6,7 @@
 # customary to leave one space after the ':' except on otherwise blank lines.
 
                        |-----handy-ruler------------------------------------------------------|
-nvidia-legacy390-driver: nvidia-legacy390-driver (Proprietary binary Nvidia 390 video driver)
+nvidia-legacy390-driver: nvidia-legacy390-driver (Proprietary binary NVidia 390 video driver)
 nvidia-legacy390-driver:
 nvidia-legacy390-driver: This is the proprietary binary video driver from nvidia for
 nvidia-legacy390-driver: the x.org X server. This package does not include the kernel

@@ -1,6 +1,6 @@
-# nvidia-340-390-470-slackbuilds
+# nvidia-340-390-470-580-slackbuilds
 
-SlackBuilds with the necessary sources to build legacy NVidia drivers (kernel modules, X drivers, and nvidia utilities) versions 340 (for Tesla cards, 32 bit and 64 bit), 390 (for Fermi cards, 32 bit and 64 bit), and 470 (for Kepler cards, 64 bit, drivers for 32 bit have not been released) for use with XLibre xserver in Slackware.
+SlackBuilds with the necessary sources to build legacy NVidia drivers (kernel modules, X drivers, and nvidia utilities) versions 340 (for Tesla cards, 32 bit and 64 bit), 390 (for Fermi cards, 32 bit and 64 bit), 470 (for Kepler cards, 64 bit, drivers for 32 bit have not been released), and 580 (recommended for Maxwell to Volta cards, supports up to Ada Lovelace, 64 bit only as well) for use with XLibre xserver in Slackware.
 
 ## Objectives
 
@@ -41,22 +41,22 @@ Then specially crafted `OutputClass`es in `/usr/share/X11/xorg.conf.d/10-nvidia.
 
 Clone the repository with Git like so:
 ```
-git clone https://github.com/ONykyf/nvidia-340-390-470-slackbuilds.git
-cd nvidia-340-390-470-slackbuilds
+git clone https://github.com/ONykyf/nvidia-340-390-470-580-slackbuilds.git
+cd nvidia-340-390-470-580-slackbuilds
 ```
-Using this method gives you the opportunity to later simply update the repository by running `git pull origin main` in `nvidia-340-390-470-slackbuilds` directory. Please be advised that the initial download of the Git repository is about 480 Mb.
+Using this method gives you the opportunity to later simply update the repository by running `git pull origin main` in `nvidia-340-390-470-580-slackbuilds` directory. Please be advised that the initial download of the Git repository is about 480 Mb.
 
 ## How to build and install
 
 Just run `nvidia-legacy${VERSION}-kernel.SlackBuild` and `nvidia-legacy${VERSION}-driver.SlackBuild` in the respective directories for the VERSION you need, and install the obtained packages.
 
-Observe that `*.run` installers from NVidia are one level up in the directory hierarchy to save space. Files for 340 and 390 are included, but the installer for 470 is not because of its size (266455 Kb). The script `get_NVIDIA-Linux-x86_64-470.256.02.run.sh` will download it for you.
+Observe that `*.run` installers from NVidia are one level up in the directory hierarchy to save space. Files for 340 and 390 are included, but the installers for 470 (266455 Kb) and 580 (388688 Kb) are not because of their size (266455 Kb). The scripts `get_NVIDIA-Linux-x86_64-470.256.02.run.sh` and `get_NVIDIA-Linux-x86_64-580.159.03.run.sh` will download them for you.
 
 The created packages and build logs are put alongside the build scripts (not in `/tmp` or wherever). You can move them to another place to keep the cloned repository intact and not to lose the built packages in case of a repository update.
 
 Note that `nvidia-legacy${VERSION}-driver` is common, but `nvidia-legacy${VERSION}-kernel` should be built and installed separately for all kernels you use (boot each kernel and re-run the build script).
 
-After the installation you will get `/boot/initrd-${KERNEL}.img` initramfs image cleared of `nouveau`, `nvidia`, `nvidia-drm`, `nvidia-uvm` and `nvidia-modeset` kernel modules, which ensures that they will not be loaded at early boot. To simplify its use, an `/etc/lilo.conf.nvidia-${KERNEL}` snippet is generated simultaneously, which looks like this:
+After the installation you will get `/boot/initrd-${KERNEL}.img` initramfs image cleared of `nouveau`, `nvidia`, `nvidia-drm`, `nvidia-uvm`, `nvidia-peermem`, and `nvidia-modeset` kernel modules, which ensures that they will not be loaded at early boot. To simplify its use, an `/etc/lilo.conf.nvidia-${KERNEL}` snippet is generated simultaneously, which looks like this:
 ```
 # Linux bootable partition config begins
 image = /boot/vmlinuz-6.12.6
@@ -72,7 +72,7 @@ image = /boot/vmlinuz-6.12.6
   label = Linux-6.12.6-
   read-only  # Partitions should be mounted read-only for checking
   initrd = /boot/initrd-6.12.6.img
-  append = " module_blacklist=nvidia,nvidia_drm,nvidia_uvm,nvidia_modeset"
+  append = " module_blacklist=nvidia,nvidia_drm,nvidia_uvm,nvidia_peermem,nvidia_modeset"
 # Linux bootable partition config ends
 ```
 

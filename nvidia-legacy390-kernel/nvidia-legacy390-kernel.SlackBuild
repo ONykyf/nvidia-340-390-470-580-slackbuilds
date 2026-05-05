@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Slackware build script for nvidia-kernel
+# Slackware build script for nvidia-legacy390-kernel
 
 # Copyright 2007-2011 Heinz Wiesinger, Amsterdam, The Netherlands
-# Copyright 2011-2017 Edward W. Koenig, Vancouver, WA, USA
-# Copyright 2025 Oleh Nykyforchyn, Ivano-Frankivsk, Ukraine
+# Copyright 2011-2019 Edward W. Koenig, Vancouver, WA, USA
+# Copyright 2025-2026 Oleh Nykyforchyn, Ivano-Frankivsk, Ukraine
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -26,8 +26,6 @@
 
 # Thanks to Robby Workman for suggestions to improve this script.
 
-# See changelog.txt
-
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=nvidia-legacy390-kernel
@@ -35,8 +33,6 @@ VERSION=${VERSION:-390.157}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_Nyk}
 PKGTYPE=${PKGTYPE:-tgz}
-
-EXTRA_CHECK=${EXTRA_CHECK:-no}
 
 NODRM=${NODRM:-no}
 
@@ -55,10 +51,8 @@ fi
 
 if [ "$ARCH" = "i586" ]; then
   TARGET="x86"
-  SRCSUFFIX=""
 elif [ "$ARCH" = "i686" ]; then
   TARGET="x86"
-  SRCSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
   TARGET="x86_64"
 fi
@@ -206,4 +200,3 @@ cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$PKGVER-$ARCH-$BUILD$TAG.$PKGTYPE
 mv $OUTPUT/$PRGNAM-$PKGVER-$ARCH-$BUILD$TAG.$PKGTYPE $CWD/
 ) 2>&1 | tee $CWD/$PRGNAM-$PKGVER-$ARCH-$BUILD$TAG.log
-

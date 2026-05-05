@@ -6,14 +6,14 @@
 # customary to leave one space after the ':' except on otherwise blank lines.
 
                        |-----handy-ruler------------------------------------------------------|
-nvidia-legacy470-kernel: nvidia-legacy470-kernel (kernel interface for the NVidia 470 driver)
-nvidia-legacy470-kernel:
-nvidia-legacy470-kernel: This is the kernel module needed by nvidia-legacy470-driver.
-nvidia-legacy470-kernel:
-nvidia-legacy470-kernel:
-nvidia-legacy470-kernel:
-nvidia-legacy470-kernel:
-nvidia-legacy470-kernel:
-nvidia-legacy470-kernel:
-nvidia-legacy470-kernel:
-nvidia-legacy470-kernel:
+nvidia-legacy580-kernel: nvidia-legacy580-kernel (Kernel interface for the NVidia 580 driver)
+nvidia-legacy580-kernel:
+nvidia-legacy580-kernel: This is the @DESC@ version of the kernel module needed by the
+nvidia-legacy580-kernel: binary nvidia-legacy580-driver.
+nvidia-legacy580-kernel:
+nvidia-legacy580-kernel:
+nvidia-legacy580-kernel:
+nvidia-legacy580-kernel:
+nvidia-legacy580-kernel:
+nvidia-legacy580-kernel:
+nvidia-legacy580-kernel:

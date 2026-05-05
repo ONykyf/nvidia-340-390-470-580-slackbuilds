@@ -6,7 +6,7 @@
 # customary to leave one space after the ':' except on otherwise blank lines.
 
                        |-----handy-ruler------------------------------------------------------|
-nvidia-legacy390-kernel: nvidia-legacy390-kernel (Kernel interface for the Nvidia 390 driver)
+nvidia-legacy390-kernel: nvidia-legacy390-kernel (Kernel interface for the NVidia 390 driver)
 nvidia-legacy390-kernel:
 nvidia-legacy390-kernel: This is the kernel module needed by nvidia-legacy390-driver.
 nvidia-legacy390-kernel:
