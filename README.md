@@ -22,6 +22,9 @@ And Nouveau on the same computer, if chosen at boot time:
 
 <img width="1920" height="1080" alt="nouveau" src="https://github.com/user-attachments/assets/ae1e19cf-503f-49d3-9fa3-b9c8ee7d9573" />
 
+Here is NVidia v.580 on GTX 750:
+
+<img width="1920" height="1080" alt="nvidia580" src="https://github.com/user-attachments/assets/2339c885-692b-44e6-950b-d8960c315ab3" />
 
 ## Source
 
