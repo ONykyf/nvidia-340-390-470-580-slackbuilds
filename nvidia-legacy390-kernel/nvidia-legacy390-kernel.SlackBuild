@@ -154,6 +154,12 @@ find -L . \
 
     # From Oleh Nykyforchyn
     patch -Np1 -i $CWD/patches/NVIDIA-Linux-x86-390.157-hardirq.patch
+
+    # From Joan Bruguera (part of https://github.com/joanbm/nvidia-470xx-linux-mainline/blob/master/patches/nvidia-470xx-fix-linux-7.0.patch)
+    patch -Np1 -i $CWD/patches/NVIDIA-Linux-x86_64-390.157-fence-signal.patch
+
+    # From Oleh Nykyforchyn
+    patch -Np1 -i $CWD/patches/NVIDIA-Linux-x86_64-390.157-screen-info.patch
 )
 
 (

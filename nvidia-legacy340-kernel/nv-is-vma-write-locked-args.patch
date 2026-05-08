@@ -1,0 +1,57 @@
+--- NVIDIA-Linux-x86_64-340.108/kernel/conftest.sh.orig	2026-05-08 13:41:20.056876233 +0300
++++ NVIDIA-Linux-x86_64-340.108/kernel/conftest.sh	2026-05-08 13:41:20.193816275 +0300
+@@ -2827,6 +2827,26 @@
+             echo "Error: unknown conftest '$1' requested" >&2
+             exit 1
+         ;;
++
++        is_vma_write_locked_has_mm_lock_seq_arg)
++            #
++            # Determine if __is_vma_write_locked() takes only a single
++            # 'struct vm_area_struct *' argument.
++            #
++            # Commit 22f7639f2f03 ("mm/vma: improve and document
++            # __is_vma_write_locked()") removed the 'unsigned int *mm_lock_seq'
++            # parameter in v7.0-rc1.
++            #
++            CODE="
++            #include <linux/mm.h>
++            #include <linux/mmap_lock.h>
++            int conftest_is_vma_write_locked_has_mm_lock_seq_arg(struct vm_area_struct *vma) {
++                unsigned int mm_lock_seq;
++                return __is_vma_write_locked(vma, &mm_lock_seq);
++            }"
++
++            compile_check_conftest "$CODE" "NV_IS_VMA_WRITE_LOCKED_HAS_MM_LOCK_SEQ_ARG" "" "types"
++        ;;
+     esac
+ }
+ 
+--- NVIDIA-Linux-x86_64-340.108/kernel/nv-mmap.c.orig	2026-05-08 13:41:41.132793656 +0300
++++ NVIDIA-Linux-x86_64-340.108/kernel/nv-mmap.c	2026-05-08 13:42:45.667141818 +0300
+@@ -393,6 +393,16 @@
+ 
+ #if !NV_CAN_CALL_VMA_START_WRITE && defined(CONFIG_PER_VMA_LOCK)
+ 
++static inline int nv_is_vma_write_locked(struct vm_area_struct *vma, unsigned int *mm_lock_seq)
++{
++#if defined(NV_IS_VMA_WRITE_LOCKED_HAS_MM_LOCK_SEQ_ARG)
++    return __is_vma_write_locked(vma, mm_lock_seq);
++#else
++    *mm_lock_seq = __vma_raw_mm_seqnum(vma);
++    return __is_vma_write_locked(vma);
++#endif
++}
++
+ #if defined(VM_REFCNT_EXCLUDE_READERS_FLAG)
+ #define NV_VMA_LOCK_OFFSET VM_REFCNT_EXCLUDE_READERS_FLAG
+ #else
+@@ -453,7 +463,7 @@
+ {
+     NvU32 mm_lock_seq;
+     NvBool locked;
+-    if (__is_vma_write_locked(vma, &mm_lock_seq))
++    if (nv_is_vma_write_locked(vma, &mm_lock_seq))
+         return;
+ 
+     locked = nv_vma_enter_locked(vma, NV_FALSE);

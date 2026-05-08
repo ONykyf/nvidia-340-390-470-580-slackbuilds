@@ -1,0 +1,79 @@
+--- NVIDIA-Linux-x86_64-340.108/kernel/os-interface.c.orig	2026-05-07 15:43:19.435294837 +0300
++++ NVIDIA-Linux-x86_64-340.108/kernel/os-interface.c	2026-05-07 15:45:59.830535461 +0300
+@@ -15,6 +15,15 @@
+ #include "nv-linux.h"
+ #include "nv-time.h"
+ 
++#if !defined(NV_VMWARE)
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 20, 0)
++    // Rel. commit "sysfb: Replace screen_info with sysfb_primary_display" (Thomas Zimmermann, 26 Nov 2025)
++    static const struct screen_info *si = &sysfb_primary_display.screen;
++#elif defined (NV_SCREEN_INFO_H_PRESENT)
++    static const struct screen_info *si = &screen_info;
++#endif
++#endif
++
+ RM_STATUS NV_API_CALL os_disable_console_access(void)
+ {
+     NV_ACQUIRE_CONSOLE_SEM();
+@@ -1148,12 +1157,12 @@
+ #if !defined(NV_VMWARE) && (defined(NVCPU_X86) || defined(NVCPU_X86_64))
+     if (NV_EFI_ENABLED())
+     {
+-        *pPhysicalAddress = screen_info.lfb_base;
++        *pPhysicalAddress = si->lfb_base;
+ #if defined(VIDEO_CAPABILITY_64BIT_BASE)
+-        *pPhysicalAddress |= (NvU64)screen_info.ext_lfb_base << 32;
++        *pPhysicalAddress |= (NvU64)si->ext_lfb_base << 32;
+ #endif
+-        *pHeight = screen_info.lfb_height;
+-        *pPitch = screen_info.lfb_linelength;
++        *pHeight = si->lfb_height;
++        *pPitch = si->lfb_linelength;
+         return RM_OK;
+     }
+ #endif
+@@ -1312,4 +1321,3 @@
+ {
+     panic(bugCodeStr);
+ }
+-
+--- NVIDIA-Linux-x86_64-340.108/kernel/nv-linux.h.orig	2026-05-07 14:44:14.693668481 +0300
++++ NVIDIA-Linux-x86_64-340.108/kernel/nv-linux.h	2026-05-07 14:51:48.848235467 +0300
+@@ -176,6 +176,9 @@
+ #else
+ #include <linux/tty.h>              /* screen_info                      */
+ #endif
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 20, 0)
++#include <linux/sysfb.h>            /* sysfb_primary_display            */
++#endif
+ #endif
+ 
+ #if !defined(CONFIG_PCI)
+--- NVIDIA-Linux-x86_64-340.108/kernel/nv.c.orig	2026-05-07 14:56:42.538332083 +0300
++++ NVIDIA-Linux-x86_64-340.108/kernel/nv.c	2026-05-07 15:48:36.522354793 +0300
+@@ -131,6 +131,15 @@
+ void *nv_stack_t_cache;
+ static nv_stack_t *__nv_init_sp;
+ 
++#if !defined(NV_VMWARE)
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 20, 0)
++    // Rel. commit "sysfb: Replace screen_info with sysfb_primary_display" (Thomas Zimmermann, 26 Nov 2025)
++    static const struct screen_info *si = &sysfb_primary_display.screen;
++#elif defined (NV_SCREEN_INFO_H_PRESENT)
++    static struct screen_info *si = &screen_info;
++#endif
++#endif
++
+ /*
+  * vGPU specific macro to lock/unlock nv_linux_devices list
+  * These macros are enabled only for vGPU module
+@@ -1465,7 +1474,7 @@
+ #endif
+ #if !defined(NV_VMWARE) && \
+   (defined(NVCPU_X86) || defined(NVCPU_X86_64))
+-        if (nv->primary_vga && (screen_info.orig_video_isVGA != 0x01))
++        if (nv->primary_vga && (si->orig_video_isVGA != 0x01))
+         {
+             if (!nv_fbdev_failure_detected)
+             {

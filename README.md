@@ -4,7 +4,7 @@ SlackBuilds with the necessary sources to build legacy NVidia drivers (kernel mo
 
 ## Objectives
 
-- To allow a user to install NVidia drivers on systems with recent Linux kernels (tested up to 6.19.5) so that they "just work", with little to no manual intervention;
+- To allow a user to install NVidia drivers on systems with recent Linux kernels (tested up to 7.0.3) so that they "just work", with little to no manual intervention;
 
 - To make NVidia packages safe in the sense that if NVidia card is absent or disabled, then the legacy drivers' presence does not affect the system;
 
@@ -62,19 +62,19 @@ Note that `nvidia-legacy${VERSION}-driver` is common, but `nvidia-legacy${VERSIO
 After the installation you will get `/boot/initrd-${KERNEL}.img` initramfs image cleared of `nouveau`, `nvidia`, `nvidia-drm`, `nvidia-uvm`, `nvidia-peermem`, and `nvidia-modeset` kernel modules, which ensures that they will not be loaded at early boot. To simplify its use, an `/etc/lilo.conf.nvidia-${KERNEL}` snippet is generated simultaneously, which looks like this:
 ```
 # Linux bootable partition config begins
-image = /boot/vmlinuz-6.12.6
+image = /boot/vmlinuz-7.0.3
   root = /dev/sda9
-  label = Linux-6.12.6+
+  label = Linux-7.0.3+
   read-only  # Partitions should be mounted read-only for checking
-  initrd = /boot/initrd-6.12.6.img
+  initrd = /boot/initrd-7.0.3.img
   append = " module_blacklist=nouveau nvidia_drm.modeset=1"
 # Linux bootable partition config ends
 # Linux bootable partition config begins
-image = /boot/vmlinuz-6.12.6
+image = /boot/vmlinuz-7.0.3
   root = /dev/sda9
-  label = Linux-6.12.6-
+  label = Linux-7.0.3-
   read-only  # Partitions should be mounted read-only for checking
-  initrd = /boot/initrd-6.12.6.img
+  initrd = /boot/initrd-7.0.3.img
   append = " module_blacklist=nvidia,nvidia_drm,nvidia_uvm,nvidia_peermem,nvidia_modeset"
 # Linux bootable partition config ends
 ```

@@ -98,7 +98,7 @@ find -L . \
   echo "\$(obj)/nvidia-modeset.o: private objtool := true" >> nvidia-modeset/nvidia-modeset.Kbuild
 
 # Patches for -current:
-if [ "$KERNELMAJOR" == "6" ]; then
+if [ "$KERNELMAJOR" == "6" -o "$KERNELMAJOR" == "7" ]; then
   patch -p1 < $CWD/patches/nvidia-legacy470-gcc14.patch
   patch -p1 < $CWD/patches/nvidia-legacy470-iosys_map.patch
   patch -p1 < $CWD/patches/nvidia-legacy470-follow_pfn.patch
@@ -110,6 +110,7 @@ if [ "$KERNELMAJOR" == "6" ]; then
   patch -p1 < $CWD/patches/kernel-6.17.patch
   patch -p1 < $CWD/patches/nvidia-470xx-fix-linux-6.19-part1.patch
   patch -p1 < $CWD/patches/nvidia-470xx-fix-linux-6.19-part2.patch
+  patch -p1 < $CWD/patches/nvidia-470xx-fix-linux-7.0.patch
 fi
 # CC=${CC:-gcc} suppresses an otherwise harmless "compiler mismatch"
 # message.  If you custom-build your kernel with clang,
@@ -118,10 +119,7 @@ fi
 )
 
 mkdir -p $PKG/lib/modules/$KERNEL/kernel/drivers/video
-install -m 0664 kernel/nvidia.ko $PKG/lib/modules/$KERNEL/kernel/drivers/video/
-install -m 0664 kernel/nvidia-modeset.ko $PKG/lib/modules/$KERNEL/kernel/drivers/video/
-install -m 0664 kernel/nvidia-drm.ko $PKG/lib/modules/$KERNEL/kernel/drivers/video/
-install -m 0664 kernel/nvidia-uvm.ko $PKG/lib/modules/$KERNEL/kernel/drivers/video/
+install -m 0664 kernel/nvidia*.ko $PKG/lib/modules/$KERNEL/kernel/drivers/video/
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$PKGVER
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$PKGVER/$PRGNAM.SlackBuild

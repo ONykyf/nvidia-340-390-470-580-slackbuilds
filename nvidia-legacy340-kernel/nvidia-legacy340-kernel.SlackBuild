@@ -126,6 +126,12 @@ cp conftest.sh conftest.deb
 cp uvm/Makefile uvm/Makefile.deb
 cp uvm/conftest.sh uvm/conftest.deb
 
+patch -p2 < $CWD/nv-drm-fop-flags.patch
+patch -p2 < $CWD/nv-no-per-vma-lock-on-x86.patch
+patch -p2 < $CWD/nv-screen-info.patch
+patch -p2 < $CWD/nv-vma-lock-offset.patch
+patch -p2 < $CWD/nv-is-vma-write-locked-args.patch
+
 $CWD/tools/get_defined340.sh
 $CWD/tools/split_conftest340.sh
 $CWD/tools/collect_tests340.sh
@@ -136,10 +142,7 @@ cp -f conftest.sh uvm
 mv Makefile.new Makefile
 mv uvm/Makefile.new uvm/Makefile
 
-patch -p2 < $CWD/nv-drm-fop-flags.patch
-patch -p2 < $CWD/nv-no-per-vma-lock-on-x86.patch
 patch -p2 < $CWD/nv-gnu17-fms-extensions-2.patch
-
 
 touch .nv-kernel.o.cmd
 )
